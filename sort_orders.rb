@@ -25,25 +25,40 @@
 # ]
 module AlgoliaShopify
   class SortOrderGenerator
-    def initialize(attributes:)
+    def initialize(attributes:, include_desc_sort_orders: false)
       @attributes = attributes
+      @include_desc_sort_orders = include_desc_sort_orders
     end
 
     def to_sort_orders
-      @attributes.map do |o|
-        {
+      selected_attributes = @attributes.select(&:should_create_sort_order!)
+
+      selected_attributes.map do |o|
+        sort_order = {
           title: o[:title],
           key: "unique_key_#{o[:id]}",
+          metadata: "created_at: #{Time.now}",
           asc: {
             active: false,
             title: "#{o[:title]} asc"
-          },
-          desc: {
+          }
+        }
+
+        if @include_desc_sort_orders
+          sort_order[:desc] = {
             active: false,
             title: "#{o[:title]} desc"
           }
-        }
+        end
+
+        sort_order
       end
+    end
+
+    private
+
+    def should_create_sort_order!(attribute)
+      attribute[:skip] != true
     end
   end
 end
