@@ -2,6 +2,7 @@ require_relative '../sort_orders'
 
 RSpec.describe AlgoliaShopify::SortOrders do
   context '#generate_sort_orders' do
+    let(:class_instance) { described_class.new }
     let(:sample_input) do
       [
         {
@@ -44,7 +45,7 @@ RSpec.describe AlgoliaShopify::SortOrders do
     end
 
     it 'returns the sort orders in the correct format' do
-      result = described_class::generate_sort_orders(sample_input)
+      result = class_instance.generate_sort_orders(sample_input)
       expect(result).to eq expected_output
     end
   end
